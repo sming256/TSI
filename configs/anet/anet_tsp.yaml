@@ -1,0 +1,43 @@
+# EXP_NAME
+EXP_NAME: anet/tsp_100x100/tsi
+
+# DATASET SETTING
+DATASET:
+  name: anet_1_3
+  tscale: 100
+  dscale: 100
+
+# MOEDL SETTINGS
+FEATURE:
+  root: ~/work/tal/dataset/anet/features/
+  name: tsp_r2plus1d_34
+  dim: 512
+  online_resize: False
+
+# SOLVER SETTING
+SOLVER:
+  lr: 1.0e-3
+  step_size: 7
+  gamma: 0.1
+  batch_size: 16
+  workers: 8
+  epoch: 10 # total epoch
+  # infer: 7 # epoch number to infer
+
+# LOSS SETTING
+LOSS:
+  pos_thresh: 0.9
+  coef_imr_cls: 1
+  coef_imr_reg: 5
+  coef_alpha: 0.2
+
+# POST PROCESS SETTING
+PROPOSAL_POST: # soft nms
+  alpha: 0.35
+  t1: 0.55
+  t2: 0.92
+
+DETECTION_POST: # soft nms
+  alpha: 0.5
+  t1: 0
+  t2: 0

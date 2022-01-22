@@ -1,0 +1,41 @@
+# exp_name
+EXP_NAME: thumos/i3d_pgcn_128x64/tsi
+
+# DATASET SETTING
+DATASET:
+  name: thumos_14
+  tscale: 128
+  dscale: 64
+
+# FEATURE SETTINGS
+FEATURE:
+  root: /home/lius0g/work/tal/dataset/thumos/features/
+  name: i3d_pgcn_snippet8
+  dim: 2048
+  snippet_stride: 8 # slide snippet each 5 frame
+
+# SOLVER SETTING
+SOLVER:
+  lr: 1.0e-4
+  step_size: 5
+  gamma: 0.1
+  batch_size: 16
+  workers: 8
+  epoch: 6 # total epoch
+  infer: 5 # epoch number to infer
+
+# LOSS SETTING
+LOSS:
+  pos_thresh: 0.9
+  coef_imr_cls: 1
+  coef_imr_reg: 5
+  coef_alpha: 0.2
+
+# POST PROCESS SETTING
+PROPOSAL_POST: # soft nms
+  iou_threshold: 0.65
+  sigma: 0.75
+
+DETECTION_POST: # soft nms
+  iou_threshold: 0
+  sigma: 0.3

@@ -1,0 +1,43 @@
+# EXP_NAME
+EXP_NAME: hacs/slowfast_128x128/tsi
+
+# DATASET SETTING
+DATASET:
+  name: hacs
+  tscale: 128
+  dscale: 128
+
+# MOEDL SETTINGS
+FEATURE:
+  root: /home/lius0g/work/tal/dataset/hacs/features/
+  name: slowfast101/pkl_unresize
+  dim: 2304
+  online_resize: True
+
+# SOLVER SETTING
+SOLVER:
+  lr: 4.0e-4
+  step_size: 10
+  gamma: 0.1
+  batch_size: 16
+  workers: 8
+  epoch: 11 # totoal epoch number
+  # infer: 7 # epoch number to infer
+
+# LOSS SETTING
+LOSS:
+  pos_thresh: 0.9
+  coef_imr_cls: 1
+  coef_imr_reg: 5
+  coef_alpha: 0.2
+
+# POST PROCESS SETTING
+PROPOSAL_POST: # soft nms
+  alpha: 0.4
+  t1: 0.5
+  t2: 0.9
+
+DETECTION_POST: # soft nms
+  alpha: 0.5
+  t1: 0
+  t2: 0
