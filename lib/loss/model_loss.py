@@ -13,60 +13,31 @@ class TAL_loss(object):
         self.mask = self.mask.cuda()
 
         # unpack gt and prediction
-        gt_start, gt_end, gt_iou_map, gt_iou_weight = video_gt
-        (tbd_ls, tbd_le, tbd_gs, tbd_ge), imr_out = pred
+        gt_start, gt_end, gt_iou_map = video_gt
+        (tem_s, tem_e), pem_out = pred
 
         # ------ TBD loss ------
-        loss_tbd_ls = bi_loss(gt_start, tbd_ls)
-        loss_tbd_le = bi_loss(gt_end, tbd_le)
-
-        loss_tbd_gs = bi_loss(gt_start, tbd_gs)
-        loss_tbd_ge = bi_loss(gt_end, tbd_ge)
-
-        loss_tbd_local = loss_tbd_ls + loss_tbd_le
-        loss_tbd_global = loss_tbd_gs + loss_tbd_ge
-
-        loss_tbd = 0.5 * (loss_tbd_local + loss_tbd_global)
+        loss_tem_s = bi_loss(gt_start, tem_s)
+        loss_tem_e = bi_loss(gt_end, tem_e)
+        loss_tem = loss_tem_s + loss_tem_e
 
         # ------  pem loss ------
         # classification loss - scale invariant loss
-        loss_imr_cls = scale_invariant_loss(
-            imr_out[:, 0, :, :],
-            gt_iou_map,
-            gt_iou_weight,
-            self.mask,
-            pos_thresh=self.cfg.LOSS.pos_thresh,
-            alpha=self.cfg.LOSS.coef_alpha,
-        )
+        loss_pem_cls = bl_loss(pem_out[:, 0, :, :], gt_iou_map, self.mask)
+
         # regression loss - l2 loss
-        loss_imr_reg = l2_loss(
-            imr_out[:, 1, :, :],
-            gt_iou_map,
-            self.mask,
-        )
-        loss_imr = self.cfg.LOSS.coef_imr_cls * loss_imr_cls + self.cfg.LOSS.coef_imr_reg * loss_imr_reg
+        loss_pem_reg = l2_loss(pem_out[:, 1, :, :], gt_iou_map, self.mask)
+
+        loss_pem = self.cfg.LOSS.coef_pem_cls * loss_pem_cls + self.cfg.LOSS.coef_pem_reg * loss_pem_reg
 
         # -------- Total Cost --------
-        cost = loss_tbd + loss_imr
+        cost = loss_tem + loss_pem
 
         loss_dict = {}
         loss_dict["cost"] = cost
-        loss_dict["tbd"] = loss_tbd
-        loss_dict["imr"] = loss_imr
+        loss_dict["tem"] = loss_tem
+        loss_dict["pem"] = loss_pem
         return cost, loss_dict
-
-
-def scale_invariant_loss(output, gt_iou_map, gt_iou_weight, valid_mask, pos_thresh=0.9, alpha=0.2):
-    gt_iou_map = gt_iou_map.cuda()
-
-    pmask = (gt_iou_map > pos_thresh).float()
-    nmask = (gt_iou_map <= pos_thresh).float() * valid_mask
-
-    gt_iou_weight = gt_iou_weight.cuda()
-    loss_pos = alpha * pmask * torch.log(output + 1e-6)
-    loss_neg = (1 - alpha) * nmask * torch.log(1.0 - output + 1e-6)
-    loss = -torch.sum((loss_pos + loss_neg) * gt_iou_weight) / output.shape[0]
-    return loss
 
 
 def bl_loss(output, gt_iou_map, valid_mask):

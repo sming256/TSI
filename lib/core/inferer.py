@@ -12,7 +12,7 @@ def inference(model, data_loader, logger, cfg):
         batch_size = video_data.shape[0]
 
         with torch.no_grad():
-            (tbd_ls, tbd_le, tbd_gs, tbd_ge), imr_out = model(video_data)
+            (tem_s, tem_e), pem_out = model(video_data)
 
         for jdx in range(batch_size):
             # get snippet info
@@ -22,20 +22,11 @@ def inference(model, data_loader, logger, cfg):
             end = video_snippets[-1]
 
             # detach result
-            pred_local_start = tbd_ls[jdx].cpu().detach().numpy()
-            pred_local_end = tbd_le[jdx].cpu().detach().numpy()
-            pred_global_start = tbd_gs[jdx].cpu().detach().numpy()
-            pred_global_end = tbd_ge[jdx].cpu().detach().numpy()
-            pred_iou_map = imr_out[jdx].cpu().detach().numpy()
+            pred_start = tem_s[jdx].cpu().detach().numpy()
+            pred_end = tem_e[jdx].cpu().detach().numpy()
+            pred_iou_map = pem_out[jdx].cpu().detach().numpy()
 
-            result = [
-                video_snippets,
-                pred_local_start,
-                pred_local_end,
-                pred_global_start,
-                pred_global_end,
-                pred_iou_map,
-            ]   
+            result = [video_snippets, pred_start, pred_end, pred_iou_map]
 
             # save result
             if cfg.DATASET.name in ["anet_1_3", "hacs"]:

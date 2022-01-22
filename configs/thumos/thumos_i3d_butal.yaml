@@ -1,5 +1,5 @@
 # exp_name
-EXP_NAME: thumos/i3d_butal_128x64/tsi
+EXP_NAME: thumos/i3d_butal_128x64/baseline_bmn
 
 # DATASET SETTING
 DATASET:
@@ -27,9 +27,8 @@ SOLVER:
 # LOSS SETTING
 LOSS:
   pos_thresh: 0.9
-  coef_imr_cls: 1
-  coef_imr_reg: 5
-  coef_alpha: 0.2
+  coef_pem_cls: 1
+  coef_pem_reg: 5
 
 # POST PROCESS SETTING
 PROPOSAL_POST: # soft nms

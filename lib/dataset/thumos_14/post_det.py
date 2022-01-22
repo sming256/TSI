@@ -142,10 +142,7 @@ def _gen_detection_video(video_list, cls_data, thu_label_id, video_dict, cfg, nu
             with open(snippet_file, "rb") as infile:
                 result_data = pickle.load(infile)
 
-            [tmp_snippet, pred_local_s, pred_local_e, pred_global_s, pred_global_e, pred_iou_map] = result_data
-
-            pred_start = np.sqrt(pred_local_s * pred_global_s)
-            pred_end = np.sqrt(pred_local_e * pred_global_e)
+            [tmp_snippet, pred_start, pred_end, pred_iou_map] = result_data
 
             # get true index of current window to aviod invalid time stamp
             start_idx = int(min(np.argwhere(tmp_snippet >= 0)))

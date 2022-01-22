@@ -1,5 +1,5 @@
 # EXP_NAME
-EXP_NAME: anet/tsn_100x100/tsi
+EXP_NAME: anet/tsn_100x100/baseline_bmn
 
 # DATASET SETTING
 DATASET:
@@ -27,15 +27,14 @@ SOLVER:
 # LOSS SETTING
 LOSS:
   pos_thresh: 0.9
-  coef_imr_cls: 1
-  coef_imr_reg: 5
-  coef_alpha: 0.2
+  coef_pem_cls: 1
+  coef_pem_reg: 5
 
 # POST PROCESS SETTING
 PROPOSAL_POST: # soft nms
-  alpha: 0.35
-  t1: 0.55
-  t2: 0.92
+  alpha: 0.4
+  t1: 0.5
+  t2: 0.9
 
 DETECTION_POST: # soft nms
   alpha: 0.5

@@ -105,15 +105,12 @@ def _gen_detection_video(video_list, video_dict, cuhk_data, cfg, num_prop=100, t
         with open(file_path, "rb") as infile:
             result = pickle.load(infile)
 
-        [_, pred_local_s, pred_local_e, pred_global_s, pred_global_e, pred_iou_map] = result
-
-        pred_s = np.sqrt(pred_local_s * pred_global_s)
-        pred_e = np.sqrt(pred_local_e * pred_global_e)
+        [_, pred_start, pred_end, pred_iou_map] = result
         pred_iou_map = pred_iou_map[0, :, :] * pred_iou_map[1, :, :]
 
-        start_mask = boundary_choose(pred_s)
+        start_mask = boundary_choose(pred_start)
         start_mask[0] = 1.0
-        end_mask = boundary_choose(pred_e)
+        end_mask = boundary_choose(pred_end)
         end_mask[-1] = 1.0
 
         score_vector_list = []

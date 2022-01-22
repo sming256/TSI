@@ -205,27 +205,13 @@ class VideoDataSet(torch.utils.data.Dataset):
         iou_map = iou_with_anchors(gt_bbox, self.map_anchor)
         iou_map = iou_map.reshape([self.dscale, self.tscale, -1])  # [D,T,N]
         gt_iou_map = np.max(iou_map, axis=2)  # [D,T]
-        gt_iou_map_index = np.argmax(iou_map, axis=2)  # [D,T]
-
-        # gt iou weight
-        gt_iou_weight = np.ones((self.dscale, self.tscale))
-        pos_mask = (gt_iou_map > self.pos_thresh) * self.valid_mask == 1  # [D, T]
-        pos_num = iou_map * np.expand_dims(self.valid_mask, 2).repeat(len(gt_bbox), axis=2)
-        pos_num = (pos_num > self.pos_thresh).sum(axis=(0, 1)) + 1  # [N], avoid 0
-        gt_iou_weight[pos_mask] = 1 / pos_num[gt_iou_map_index[pos_mask]]
-
-        neg_mask = (gt_iou_map <= self.pos_thresh) * self.valid_mask == 1
-        neg_num = np.sum(self.valid_mask) - np.sum(pos_mask)
-        gt_iou_weight[neg_mask] = len(gt_bbox) / neg_num
-        gt_iou_weight[self.valid_mask == 0] = 0
 
         # to Tensor
         gt_start = torch.Tensor(gt_start)
         gt_end = torch.Tensor(gt_end)
         gt_iou_map = torch.Tensor(gt_iou_map)
-        gt_iou_weight = torch.Tensor(gt_iou_weight)
-        return (gt_start, gt_end, gt_iou_map, gt_iou_weight)
-        
+        return (gt_start, gt_end, gt_iou_map)
+
     def _get_base_feat(self, index):
         video_info = {}
         video_info["video_name"] = self.data["video_names"][index]
