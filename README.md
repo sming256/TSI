@@ -105,7 +105,7 @@ Pretrained weights and experiment outputs can be found in [Google Drive](https:/
 |  TSI   | 19.38 | 41.13 | 50.87 | 71.83  | 63.25 |
 
 ## Acknowledgment and Citation
-We thank for the help of Tianwei Lin, Doingqi Wang.
+We thank for the help of Tianwei Lin, Dongqi Wang.
 
 If you find this work is useful in your research, please consider citing:
 ```
